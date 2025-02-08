@@ -2,7 +2,7 @@
 import random
 
 # Put all the functions into another file and import them
-import functions_lab05_starter
+import functions_lab05
 
 # Game Flow
 # Define two Dice
@@ -186,12 +186,12 @@ if not input_invalid:
     while m_health_points > 0 and health_points > 0:
 
         input("You strike first (Press Enter)")
-        m_health_points = functions_lab05_starter.hero_attacks(combat_strength, m_health_points)
+        m_health_points = functions_lab05.hero_attacks(combat_strength, m_health_points)
         if m_health_points == 0:
             num_stars = 3
         else:
             input("The monster strikes (Press Enter)")
-            health_points = functions_lab05_starter.monster_attacks(m_combat_strength, health_points)
+            health_points = functions_lab05.monster_attacks(m_combat_strength, health_points)
             if health_points == 0:
                 num_stars = 1
             else:
