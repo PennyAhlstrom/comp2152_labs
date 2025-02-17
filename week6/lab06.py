@@ -1,21 +1,22 @@
 #Reading
 f = open("dontwant.txt")
 # f = open("dontwant.txt", "r") # Identical
-s = f.readline()
+s = f.readlines()
 print(s)
 f.close()
 
 #Writing
 f = open("dontwant.txt", "w")
-f.write{"some line\n"}
-f.write{"some more lines\n"}
+f.write("Some line\n")
+f.write("More lines\n")
 f.close()
 
 # Appending
-with open("dontwant.txt") as f:
+with open("dontwant.txt", "a") as f:
     # s = f.readlines()
     #print(s)
-    f.print("Extra line\n")
+    f.write("Extra line\n")
+
 
 # Import the random library to use for the dice later
 import random
