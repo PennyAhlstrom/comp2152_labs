@@ -215,7 +215,7 @@ if not input_invalid:
 
     while input_invalid and attempts < 3:
         attempts += 1
-        num_dream_lvls = input("How many dream levels do you want to go down?" (0-3): )
+        num_dream_lvls = input("How many dream levels do you want to go down?" (0-3))
         if num_dream_lvls.isnumeric():
             num_dream_lvls = int(num_dream_lvls)
             if num_dream_lvls in range(1, 4):

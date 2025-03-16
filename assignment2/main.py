@@ -2,7 +2,7 @@
 import random
 
 # Put all the functions into another file and import them
-import functions_lab06_solution
+import functions
 
 # Define two Dice
 small_dice_options = list(range(1, 7))
