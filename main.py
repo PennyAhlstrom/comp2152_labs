@@ -4,6 +4,7 @@ import random
 # Put all the functions into another file and import them
 import function
 
+#
 # a = 1/0
 # open("not_exist.txt")
 #
