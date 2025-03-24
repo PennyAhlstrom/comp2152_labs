@@ -4,12 +4,14 @@ import hero
 import monster
 
 # Define two Dice
-def small_dice_roll(small_dice_options):
-    small_dice_options = list(range(1, 7))
+def small_dice_roll(small_dice_options=None):
+    if small_dice_options is None:
+        small_dice_options= list(range(1, 7))
     return random.choice(small_dice_options)
 
-def big_dice_roll(big_dice_options):
-    big_dice_options = list(range(1, 21))
+def big_dice_roll(big_dice_options=None):
+    if big_dice_options is None:
+        big_dice_options = (range(1, 21))
     return random.choice(big_dice_options)
 
 # Will the line below print when you import function.py into main.py?
@@ -86,10 +88,14 @@ def inception_dream(num_dream_lvls):
         print("Invalid input. Please enter a number between 0-3.")
 
 # Lab 06 - Question 3 and 4
-def save_game(winner, hero_name="", num_stars=0, monsters_killed=0):
+def save_game(winner, hero_name="", num_stars=0):
+    # Load the current number of monsters killed
+    monsters_killed = load_monsters_killed()
+
     with open("save.txt", "a") as file:
         if winner == "Hero":
             file.write(f"Hero {hero_name} has killed a monster and gained {num_stars} stars.\n")
+            monsters_killed += 1
         elif winner == "Monster":
             file.write("Monster has killed the hero previously\n")
         file.write(f"The number of monsters killed in total (including all past games) is now: {monsters_killed}.\n")
@@ -98,15 +104,13 @@ def save_game(winner, hero_name="", num_stars=0, monsters_killed=0):
 def load_game():
     try:
         with open("save.txt", "r") as file:
-            print("    |    Loading from saved file ...")
+            # print("    |    Loading from saved file ...")
             lines = file.readlines()
-            if len(lines) <2:
+            if len(lines) < 2:
                 print("No previous game found. Starting fresh.")
                 return None
             else:
-                last_two_lines = lines[-2].strip() + "\n" + lines[-1].strip()
-                print(last_two_lines)
-                return last_two_lines
+                return lines[-2:]
     except FileNotFoundError:
         print("No previous game found. Starting fresh.")
         return None
@@ -116,25 +120,36 @@ def load_monsters_killed():
         previous_game = load_game()
         if previous_game is None:
             return 0
-        previous_monsters_killed = int(previous_game[-1].strip().split(":")[1])
-        return previous_monsters_killed
+        last_line = previous_game[-1].strip()
+        if "monsters killed in total" in last_line:
+            previous_monsters_killed = int(last_line.split(":")[-1].strip())
+            return previous_monsters_killed
+        else:
+            return 0
+
     except ValueError:
         return 0
 
 # Lab 06 - Question 5b
-def adjust_combat_strength(combat_strength, last_game=None):
+def adjust_combat_strength(hero, monster):
     # Lab Week 06 - Question 5 - Load the game
-    # last_game = load_game()
-    if last_game:
-        if "Hero" in last_game and "gained" in last_game:
-            num_stars = int(last_game.split()[-2])
-            if num_stars > 3:
-                print("    |    ... Increasing the monster's combat strength since you won so easily last time")
-                monster.combat_strength+= 1
-        elif "Monster has killed the hero" in last_game:
-            combat_strength += 1
+    last_game = load_game()
+    monsters_killed = load_monsters_killed()
+    if last_game and len(last_game) >= 2:
+        last_line = last_game[-1].strip()
+        second_last_line = last_game[-2].strip()
+        if "Hero" in second_last_line and "gained" in second_last_line and "stars" in second_last_line:
+            try:
+                num_stars = int(second_last_line.split()[-2])
+                if num_stars > 3:
+                    print("    |    ... Increasing the monster's combat strength since you won so easily last time")
+                    monster.combat_strength+= 1
+            except ValueError:
+                print("    |    ... Could not extract a valid number of stars from the last game data.")
+        elif "Monster has killed the hero" in second_last_line:
+            hero.combat_strength += 10
             print("    |    ... Increasing the hero's combat strength since you lost last time")
         else:
             print("    |    ... Based on your previous game, neither the hero nor the monster's combat strength will be increased")
-
+    return monsters_killed
 

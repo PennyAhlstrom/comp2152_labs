@@ -1,3 +1,6 @@
+# COMP2152 - Assignment 2
+# Penny Ahlstrom - 101488485
+
 # Import os and platform library/module
 import os
 import platform
@@ -5,17 +8,13 @@ import platform
 # Import the random library to use for the dice later
 import random
 
-# ????????????from tarfile import HeaderError
-
 # Put all the functions into another file and import them
 import functions
-import hero
-import monster
 from functions import load_game, load_monsters_killed
 
 # Use Hero and Monster classes
-import hero
-import monster
+from hero import Hero
+from monster import Monster
 
 # Print operating system name
 print("Operating system:", os.name)
@@ -24,10 +23,10 @@ print("Operating system:", os.name)
 print("Python version:", platform.python_version())
 
 # Instantiate hero and monster object to use for game sequence
-hero = hero.Hero()
-monster = monster.Monster()
+hero = Hero(small_dice_options=None, big_dice_options=None)
+monster = Monster(small_dice_options=None, big_dice_options=None)
 
-# # Define two Dice
+# # Define two Dice - This has been moved into functions.py
 # small_dice_options = list(range(1, 7))
 # big_dice_options = list(range(1, 21))
 
@@ -48,11 +47,13 @@ monster_powers = {
 # Define the number of stars to award the player
 num_stars = 0
 
+print("    |    Loading from saved file ...")
+load_game()
+print("The game has loaded")
 # Load number of monsters killed previously
 monsters_killed = load_monsters_killed()
-
-load_game()
-
+print("The number of monsters killed previously has loaded")
+print()
 print(f"The hero's combat strength is: {hero.combat_strength}")
 print(f"The monsters' combat strength is: {monster.combat_strength}")
 
@@ -77,11 +78,10 @@ while input_invalid and i in range(5):
     weapon_roll = functions.small_dice_roll()
 
     # Limit the combat strength to 6
-    hero.combat_strength = min(6, (functions.adjust_combat_strength + weapon_roll))
+    functions.adjust_combat_strength(hero, monster)
+    hero.combat_strength = min(6, (hero.combat_strength + weapon_roll))
     print("    |    The hero\'s weapon is " + str(weapons[weapon_roll - 1]))
 
-    # Lab 06 - Question 5b
-    functions.adjust_combat_strength(hero.combat_strength, monster.combat_strength)
 
     # Weapon Roll Analysis
     print("    ------------------------------------------------------------------")
@@ -217,16 +217,14 @@ while input_invalid and i in range(5):
         if not (attack_roll % 2 == 0):
             print("    |", end="    ")
             input("You strike (Press enter)")
-            # Something is off here *****************************************************************
-            monster.health_points = hero.hero_attacks(hero.combat_strength, monster.health_points)
+            monster.health_points = hero.hero_attacks(hero.combat_strength, monster)
             if monster.health_points == 0:
                 num_stars = 3
             else:
                 print("    |", end="    ")
                 print("------------------------------------------------------------------")
                 input("    |    The monster strikes (Press enter)!!!")
-                # Something is off here *****************************************************************
-                hero.health_points = monster.monster_attacks(monster.combat_strength, hero.health_points)
+                hero.health_points = monster.monster_attacks(monster.combat_strength, hero)
                 if hero.health_points == 0:
                     num_stars = 1
                 else:
@@ -234,16 +232,14 @@ while input_invalid and i in range(5):
         else:
             print("    |", end="    ")
             input("The Monster strikes (Press enter)")
-            # Something is off here *****************************************************************
-            hero.health_points = functions.monster_attacks(monster.combat_strength, hero.health_points)
+            hero.health_points = monster.monster_attacks(monster.combat_strength, hero)
             if hero.health_points == 0:
                 num_stars = 1
             else:
                 print("    |", end="    ")
                 print("------------------------------------------------------------------")
                 input("The hero strikes!! (Press enter)")
-                # Something is off here *****************************************************************
-                monster.health_points = functions.hero_attacks(hero.combat_strength, monster.health_points)
+                monster.health_points = hero.hero_attacks(hero.combat_strength, monster)
                 if monster.health_points == 0:
                     num_stars = 3
                 else:
@@ -279,4 +275,4 @@ while input_invalid and i in range(5):
         stars_display = "*" * num_stars
         print("    |    Hero " + short_name + " gets <" + stars_display + "> stars")
 
-        functions.save_game(winner, hero_name=short_name, num_stars=num_stars, monsters_killed=monsters_killed)
+    functions.save_game(winner, hero_name=short_name, num_stars=num_stars)
