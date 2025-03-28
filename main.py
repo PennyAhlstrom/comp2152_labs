@@ -4,7 +4,16 @@ import random
 # Put all the functions into another file and import them
 import function
 
+# # List Comprehension
+# l = [1, 2, 3, 4]
+# l2 =[x * 2 for x in l]
+# or
+# l2 = [x for x in l if x < 5]
+# print(l2)
 #
+
+
+
 # a = 1/0
 # open("not_exist.txt")
 #
